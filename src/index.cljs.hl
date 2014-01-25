@@ -1,0 +1,56 @@
+(page "index.html")
+
+;;; dataflow model ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn n->bits
+  "number => [[base-10-digit bit-list]+]
+  e.g 53 => [[5 [false true false false]] [3 [true false false false]]]"
+  [n]
+  (mapv (fn [digit]
+          [digit (mapv #(cell= (bit-test digit %)) [3 2 1 0])])
+        [(cell= (quot n 10)) (cell= (mod n 10))]))
+
+(defn time->model
+  "binary cock dataflow, takes a stem cell holding a js/Date"
+  [time]
+  {:hours   (n->bits (cell= (.getHours time)))
+   :minutes (n->bits (cell= (.getMinutes time)))
+   :seconds (n->bits (cell= (.getSeconds time)))})
+
+;;; GUI components ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defelem led
+  [{:keys [on]} _]
+  (div :do-class (cell= {:unit true :on on :off (not on)})))
+
+(defelem column
+  [{[digit bits] :state} _]
+  (div :class "col"
+    (conj (mapv (partial led :on) bits)
+          (div :class "unit" (text "~{digit}")))))
+
+(defelem column-pair
+  [{[msd lsd] :state} _]
+  (div :class "colpair"
+    (column :state msd)
+    (column :state lsd)))
+
+(defelem clock
+  [{{:keys [hours minutes seconds]} :time legend :legend} _]
+  (div
+    (div :class "col legend" (map #(div :class "unit" (str %)) legend))
+    (column-pair :state hours)
+    (column-pair :state minutes)
+    (column-pair :state seconds)))
+
+(html
+  (head
+    (meta :charset "utf-8")
+    (title "Hoplon • Binary Clock")
+    (link :rel "stylesheet" :href "screen.css"))
+  (body
+    (let [current-time (cell (js/Date.))]
+      (js/setInterval #(reset! current-time (js/Date.)) 1000)
+      (clock :time (time->model current-time)
+             :legend [8 4 2 1]))
+    (div :class "note"
+      (a :href "http://pmbauer.github.io/2014/01/27/hoplon-binary-clock" "Article") " • "
+      (a :href "https://github.com/pmbauer/binary-clock/blob/master/src/index.cljs.hl" "Source Code"))))
