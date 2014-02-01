@@ -16,7 +16,7 @@ directory.
 1. Start the auto-compiler.
 
 ```bash
-$ boot watch hoplon
+$ boot dev
 ```
 
 2. Open the compiled html file.
