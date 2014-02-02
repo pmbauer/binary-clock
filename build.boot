@@ -6,10 +6,10 @@
 (set-env!
   :project 'binary-clock
   :version "0.1.0-SNAPSHOT"
-  :dependencies [['tailrecursion/boot.core "2.0.0"]
-                 ['tailrecursion/boot.task "2.0.0"]
-                 ['tailrecursion/hoplon "5.0.0"]
-                 ['org.clojure/clojurescript "0.0-2156"]]
+  :dependencies '[[tailrecursion/boot.core "2.0.0"]
+                  [tailrecursion/boot.task "2.0.0"]
+                  [tailrecursion/hoplon "5.1.0"]
+                  [org.clojure/clojurescript "0.0-2156"]]
   :out-path "resources/public"
   :src-paths #{"src"})
 

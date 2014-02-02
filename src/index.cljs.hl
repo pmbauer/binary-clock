@@ -19,7 +19,7 @@
 ;;; GUI components ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defelem led
   [{:keys [on]} _]
-  (div :do-class (cell= {:unit true :on on :off (not on)})))
+  (div :class (cell= {:unit true :on on :off (not on)})))
 
 (defelem column
   [{[digit bits] :state} _]
