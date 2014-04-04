@@ -1,14 +1,12 @@
 #!/usr/bin/env boot
-;JVM_OPTS='-Xms512m -XX:+TieredCompilation -XX:TieredStopAtLevel=1'
 
-#tailrecursion.boot.core/version "2.0.0"
+#tailrecursion.boot.core/version "2.3.1"
 
 (set-env!
   :project 'binary-clock
   :version "0.1.0-SNAPSHOT"
-  :dependencies '[[tailrecursion/boot.core "2.0.0"]
-                  [tailrecursion/boot.task "2.0.0"]
-                  [tailrecursion/hoplon "5.1.0"]
+  :dependencies '[[tailrecursion/boot.task "2.1.2"]
+                  [tailrecursion/hoplon "5.5.1"]
                   [org.clojure/clojurescript "0.0-2156"]]
   :out-path "resources/public"
   :src-paths #{"src"})
