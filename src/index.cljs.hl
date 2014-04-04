@@ -1,45 +1,53 @@
 (page "index.html")
 
-;;; dataflow model ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; model ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn n->bits
   "number => [[base-10-digit bit-list]+]
   e.g 53 => [[5 [false true false false]] [3 [true false false false]]]"
   [n]
   (mapv (fn [digit]
-          [digit (mapv #(cell= (bit-test digit %)) [3 2 1 0])])
-        [(cell= (quot n 10)) (cell= (mod n 10))]))
+          {:digit digit
+           :bits (mapv #(bit-test digit %) [3 2 1 0])})
+        [(quot n 10) (mod n 10)]))
 
 (defn time->model
-  "binary cock dataflow, takes a stem cell holding a js/Date"
+  "binary cock model, takes a js/Date"
   [time]
-  {:hours   (n->bits (cell= (.getHours time)))
-   :minutes (n->bits (cell= (.getMinutes time)))
-   :seconds (n->bits (cell= (.getSeconds time)))})
+  {:hours   (n->bits (.getHours time))
+   :minutes (n->bits (.getMinutes time))
+   :seconds (n->bits (.getSeconds time))})
 
 ;;; GUI components ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defelem led
-  [{:keys [on]} _]
+  [{:keys [on]}]
   (div :class (cell= {:unit true :on on :off (not on)})))
 
 (defelem column
-  [{[digit bits] :state} _]
+  [{:keys [model]}]
   (div :class "col"
-    (conj (mapv (partial led :on) bits)
-          (div :class "unit" (text "~{digit}")))))
+    (conj (->> (range (count (:bits @model)))
+               (mapv #(cell= (nth (:bits model) %)))
+               (mapv (partial led :on)))
+          (div :class "unit" (text "~{(:digit model)}")))))
 
 (defelem column-pair
-  [{[msd lsd] :state} _]
+  [{:keys [model]}]
   (div :class "colpair"
-    (column :state msd)
-    (column :state lsd)))
+    (column :model (cell= (first model)))
+    (column :model (cell= (second model)))))
 
 (defelem clock
-  [{{:keys [hours minutes seconds]} :time legend :legend} _]
+  [{:keys [time legend] :or {legend [8 4 2 1]}}]
   (div
     (div :class "col legend" (map #(div :class "unit" (str %)) legend))
-    (column-pair :state hours)
-    (column-pair :state minutes)
-    (column-pair :state seconds)))
+    (column-pair :model (cell= (:hours time)))
+    (column-pair :model (cell= (:minutes time)))
+    (column-pair :model (cell= (:seconds time)))))
+
+;;; controller ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn periodic-cell [thunk interval]
+  (with-let [v (cell (thunk))]
+    (js/setInterval #(reset! v (thunk)) interval)))
 
 (html
   (head
@@ -47,10 +55,8 @@
     (title "Hoplon • Binary Clock")
     (link :rel "stylesheet" :href "screen.css"))
   (body
-    (let [current-time (cell (js/Date.))]
-      (js/setInterval #(reset! current-time (js/Date.)) 1000)
-      (clock :time (time->model current-time)
-             :legend [8 4 2 1]))
+    (let [model (periodic-cell #(time->model (js/Date.)) 1000)]
+      (clock :time model))
     (div :class "note"
       (a :href "http://pmbauer.github.io/2014/01/27/hoplon-binary-clock" "Article") " • "
       (a :href "https://github.com/pmbauer/binary-clock/blob/master/src/index.cljs.hl" "Source Code"))))
