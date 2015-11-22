@@ -51,9 +51,9 @@
 
 (html
   (head
-    (meta :charset "utf-8")
+    (html-meta :charset "utf-8")
     (title "Hoplon • Binary Clock")
-    (link :rel "stylesheet" :href "screen.css"))
+    (link :href "screen.css"  :rel "stylesheet"))
   (body
     (let [model (periodic-cell #(time->model (js/Date.)) 1000)]
       (clock :time model))
