@@ -19,7 +19,7 @@ A binary clock in Hoplon
     - auto reload the html page on changes
     - Clojurescript REPL
 
-2. Go to http://localhost:8000 in your browser. You should see the application.
+2. Go to [http://localhost:8000](http://localhost:8000) in your browser. You should see the application.
 
 3. If you edit and save a file, the task will recompile the code and reload the
    browser to show the updated version.
