@@ -6,7 +6,6 @@ A binary clock in Hoplon
 
 - java 1.7+
 - [boot][1]
-- [leiningen][2]
 
 ## Usage
 ### Development
@@ -20,12 +19,10 @@ A binary clock in Hoplon
     - auto reload the html page on changes
     - Clojurescript REPL
 
-2. Go to [http://localhost:8000][3] in your browser. You should see "Hello, Hoplon!".
+2. Go to http://localhost:8000 in your browser. You should see the application.
 
 3. If you edit and save a file, the task will recompile the code and reload the
    browser to show the updated version.
-
-4. You're already done.
 
 ## License
 
@@ -38,5 +35,3 @@ this software in any fashion, you are agreeing to be bound by the terms of
 this license. You must not remove this notice, or any other, from this software.
 
 [1]: http://boot-clj.com
-[2]: http://localhost:8000
-[3]: http://hoplon.io
