@@ -1,30 +1,35 @@
-#!/usr/bin/env boot
-
-#tailrecursion.boot.core/version "2.3.1"
-
 (set-env!
-  :project 'binary-clock
-  :version "0.1.0-SNAPSHOT"
-  :dependencies '[[tailrecursion/boot.task "2.1.2"]
-                  [tailrecursion/hoplon "5.5.1"]
-                  [org.clojure/clojurescript "0.0-2156"]]
-  :out-path "resources/public"
-  :src-paths #{"src"})
-
-(add-sync! (get-env :out-path) #{"resources/assets"})
+  :dependencies '[[adzerk/boot-cljs          "1.7.170-3"]
+                  [adzerk/boot-reload        "0.4.2"]
+                  [hoplon/boot-hoplon        "0.1.10"]
+                  [hoplon/hoplon             "6.0.0-alpha11"]
+                  [org.clojure/clojure       "1.7.0"]
+                  [org.clojure/clojurescript "1.7.170"]
+                  [tailrecursion/boot-jetty  "0.1.0"]]
+  :source-paths #{"src"}
+  :asset-paths  #{"assets"})
 
 (require
-  ['tailrecursion.hoplon.boot :refer :all]
-  ['tailrecursion.boot.task :refer :all])
+  '[adzerk.boot-cljs         :refer [cljs]]
+  '[adzerk.boot-reload       :refer [reload]]
+  '[hoplon.boot-hoplon       :refer [hoplon prerender]]
+  '[tailrecursion.boot-jetty :refer [serve]])
 
 (deftask dev
-  "Build for development, implies watch"
+  "Build binary-clock for local development."
   []
-  (comp (watch)
-        (hoplon {:prerender false
-                 :pretty-print true})))
+  (comp
+    (watch)
+    (speak)
+    (hoplon)
+    (reload)
+    (cljs)
+    (serve :port 8000)))
 
 (deftask prod
-  "Build for production"
+  "Build binary-clock for production deployment."
   []
-  (hoplon {:optimizations :advanced}))
+  (comp
+    (hoplon)
+    (cljs :optimizations :advanced)
+    (prerender)))
